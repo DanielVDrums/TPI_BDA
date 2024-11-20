@@ -9,6 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,6 +66,15 @@ public class VehiculoController {
     public ResponseEntity<Void> evaluarRestricciones(@RequestBody PosicionDTO posicionDTO) {
         vehiculoServicio.evaluarRestricciones(posicionDTO);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/kilometros/{id}")
+    public double obtenerKilometrosRecorridos(
+            @PathVariable("id") Integer idVehiculo,
+            @RequestParam(value = "fechaInicio") String fechaInicio,
+            @RequestParam(value = "fechaFin") String fechaFin) throws ParseException {
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        return vehiculoServicio.calcularKilometrosRecorridos(idVehiculo, format.parse(fechaInicio), format.parse(fechaFin));
     }
 }
 
