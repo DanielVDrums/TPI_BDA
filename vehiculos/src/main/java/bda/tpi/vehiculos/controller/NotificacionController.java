@@ -4,6 +4,7 @@ import bda.tpi.vehiculos.dto.IncidenteDTO;
 import bda.tpi.vehiculos.dto.NotificacionPromDTO;
 import bda.tpi.vehiculos.entity.Notificacion;
 import bda.tpi.vehiculos.service.NotificacionServicio;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,8 +26,10 @@ public class NotificacionController {
     }
 
     @PostMapping("/enviarPromocion")
-    public void enviarPromocion(@RequestBody NotificacionPromDTO notificacionPromDTO) {
+    public ResponseEntity<String> enviarPromocion(@RequestBody NotificacionPromDTO notificacionPromDTO) {
         notificacionServicio.enviarNotificacionesPromocion(notificacionPromDTO);
+        return ResponseEntity.ok("Promoción enviada");
     }
+
 
 }
