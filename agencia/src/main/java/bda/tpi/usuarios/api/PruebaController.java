@@ -8,7 +8,6 @@ import bda.tpi.usuarios.service.PruebaServicio;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.DateFormat;
@@ -53,7 +52,6 @@ public class PruebaController {
         }
     }
 
-    @PreAuthorize("hasRole('EMPLEADO') and principal.claims['preferred_username'] == 'g070-b'")
     @PostMapping("/add")
     public ResponseEntity<?> agregarPrueba(@RequestBody @Valid PruebaDTO pruebaDTO) {
         Prueba prueba = pruebaServicio.agregarNuevaPrueba(pruebaDTO);
