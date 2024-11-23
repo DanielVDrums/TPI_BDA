@@ -35,10 +35,6 @@ public class PruebaServicio {
         Integer idVehiculo = this.buscarVehiculoPatente(pruebaDTO.vehiculoPatente());
         Empleado empleado = empleadoService.obtenerEmpleadoPorLegajo(pruebaDTO.legajo());
         Interesado interesado = interesadoServicio.obtenerInteresadoPorDocumento(pruebaDTO.usuarioDni());
-        Optional<Prueba> prueba = pruebaRepository.findByIdVehiculo(idVehiculo);
-        if (prueba.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El vehiculo ya esta ocupado");
-        }
         if (!interesado.licenciaVigente()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "no tiene licencia vigente");
         }

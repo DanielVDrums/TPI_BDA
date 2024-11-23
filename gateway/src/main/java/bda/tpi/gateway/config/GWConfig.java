@@ -26,28 +26,46 @@ public class GWConfig {
         return builder.routes()
                 .route(p -> p
                         .path("/pruebas/**")
-                        .uri("http://localhost:8082"))
+                        .uri(uriAgencia))
                 .route(p -> p
                         .path("/reportes/**")
                         .uri(uriAgencia))
                 .route(p -> p
                         .path("/vehiculos/**")
                         .uri(uriVehiculos))
+                .route(p -> p
+                        .path("/notificaciones/**")
+                        .uri(uriVehiculos))
+                .route(p -> p
+                        .path("/reportes/incidentes")
+                        .uri(uriAgencia))
+                .route(p -> p
+                        .path("/vehiculos/kilometros/**")
+                        .uri(uriVehiculos))
                 .build();
-
     }
 
     @Bean
     public SecurityWebFilterChain filterChain(ServerHttpSecurity http) throws Exception {
         http.authorizeExchange(exchanges -> exchanges
-                        .pathMatchers(HttpMethod.POST,"/pruebas/add")
+                        .pathMatchers(HttpMethod.POST,"/pruebas/**")
                         .hasRole("EMPLEADO")
                         .pathMatchers(HttpMethod.GET,"/pruebas/**")
                         .hasRole("EMPLEADO")
 
 
-                        .pathMatchers(HttpMethod.GET,"/vehiculos")
+                        .pathMatchers(HttpMethod.GET,"/vehiculos/**")
                         .hasRole("VEHICULO")
+                        .pathMatchers(HttpMethod.POST,"/vehiculos/**")
+                        .hasRole("VEHICULO")
+
+                        .pathMatchers(HttpMethod.POST,"/notificaciones/**")
+                        .hasRole("EMPLEADO")
+
+                        .pathMatchers(HttpMethod.GET,"/reportes/**")
+                        .hasRole("ADMIN")
+                        .pathMatchers(HttpMethod.GET,"/vehiculos/kilometros/**")
+                        .hasRole("ADMIN")
 
                         .anyExchange()
                         .authenticated()

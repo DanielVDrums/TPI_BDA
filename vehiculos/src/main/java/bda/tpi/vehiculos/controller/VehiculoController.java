@@ -27,11 +27,6 @@ public class VehiculoController {
         this.vehiculoServicio = vehiculoServicio;
     }
 
-//    @PostMapping("/add")
-//    public Vehiculo agregarVehiculo(@RequestBody VehiculoDTO vehiculoDTO) {
-//        return vehiculoServicio.agregarNuevoVehiculo(vehiculoDTO);
-//    }
-
     @GetMapping()
     public ResponseEntity<?> obtenerTodosVehiculos() {
         List<Vehiculo> vehiculos = vehiculoServicio.obtenerTodosVehiculos();

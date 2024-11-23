@@ -33,7 +33,7 @@ public class ReporteServicio {
     public List<Prueba> obtenerPruebasConIncidentes() {
         try {
             ResponseEntity<List<IncidenteDTO>> response = restTemplate.exchange(
-                    "http://127.0.0.1:8083/notificacion/incidentes",
+                    "http://127.0.0.1:8083/notificaciones/incidentes",
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<List<IncidenteDTO>>() {}
