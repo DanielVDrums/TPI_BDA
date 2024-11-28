@@ -6,6 +6,7 @@ import bda.tpi.vehiculos.dto.VehiculoDTO;
 import bda.tpi.vehiculos.entity.Vehiculo;
 import bda.tpi.vehiculos.service.VehiculoServicio;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -62,7 +63,7 @@ public class VehiculoController {
     }
 
     @PostMapping("/evaluarPosicion")
-    public ResponseEntity<String> evaluarRestricciones(@RequestBody PosicionDTO posicionDTO) {
+    public ResponseEntity<String> evaluarRestricciones(@RequestBody @Valid PosicionDTO posicionDTO) {
         vehiculoServicio.evaluarRestricciones(posicionDTO);
         return ResponseEntity.ok("Se envió correctamente la posición");
     }

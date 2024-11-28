@@ -34,17 +34,17 @@ public class PruebaServicio {
 
     public Prueba agregarNuevaPrueba(PruebaDTO pruebaDTO) {
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        format.setTimeZone(TimeZone.getTimeZone("UTC"));
         Integer idVehiculo = this.buscarVehiculoPatente(pruebaDTO.vehiculoPatente());
         Empleado empleado = empleadoService.obtenerEmpleadoPorLegajo(pruebaDTO.legajo());
         Interesado interesado = interesadoServicio.obtenerInteresadoPorDocumento(pruebaDTO.usuarioDni());
         if (!interesado.licenciaVigente()) { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "no tiene licencia vigente");}
         if (interesado.getRestringido()) { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Esta restringido para probar vehiculos"); }
         try{
+            Date ahora = new Date();
             Date fechaHoraInicio = format.parse(pruebaDTO.fechaHoraInicio());
             Date fechaHoraFin = format.parse(pruebaDTO.fechaHoraFin());
             if (fechaHoraInicio.after(fechaHoraFin)) { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fecha de Inicio mayor a fecha fin"); }
-            if (fechaHoraInicio.before(new Date())){ throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fecha Invalida, no se puede pasado"); }
+            if (fechaHoraInicio.before(ahora)){ throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fecha Invalida, no se puede pasado"); }
             if (this.vehiculoEnUso(idVehiculo,fechaHoraInicio)){ throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Vehiculo "+idVehiculo+" ya esta en uso para la fecha "+pruebaDTO.fechaHoraInicio()); }
             return pruebaRepository.save(new Prueba(
                     fechaHoraInicio,
