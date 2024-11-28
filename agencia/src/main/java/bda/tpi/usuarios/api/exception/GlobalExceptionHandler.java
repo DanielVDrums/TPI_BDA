@@ -13,7 +13,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ParseException.class)
     public ResponseEntity<String> handleParseException(ParseException ex) {
-        String errorMessage = "Formato de fecha incorrecto. Por favor, use el formato dd-MM-yyyy.";
+        String errorMessage = "Formato de fecha incorrecto. Por favor, use el formato de fecha yyyy-MM-dd HH:mm.";
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
 

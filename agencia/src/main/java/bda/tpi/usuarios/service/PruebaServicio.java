@@ -32,18 +32,18 @@ public class PruebaServicio {
 
     public Prueba agregarNuevaPrueba(PruebaDTO pruebaDTO) {
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
         Integer idVehiculo = this.buscarVehiculoPatente(pruebaDTO.vehiculoPatente());
         Empleado empleado = empleadoService.obtenerEmpleadoPorLegajo(pruebaDTO.legajo());
         Interesado interesado = interesadoServicio.obtenerInteresadoPorDocumento(pruebaDTO.usuarioDni());
-        if (!interesado.licenciaVigente()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "no tiene licencia vigente");
-        }
-        if (interesado.getRestringido()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Esta restringido para probar vehiculos");
-        }
+        if (!interesado.licenciaVigente()) { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "no tiene licencia vigente");}
+        if (interesado.getRestringido()) { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Esta restringido para probar vehiculos"); }
         try{
             Date fechaHoraInicio = format.parse(pruebaDTO.fechaHoraInicio());
             Date fechaHoraFin = format.parse(pruebaDTO.fechaHoraFin());
+            if (fechaHoraInicio.after(fechaHoraFin)) { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fecha de Inicio mayor a fecha fin"); }
+            if (fechaHoraInicio.before(new Date())){ throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fecha Invalida, no se puede pasado"); }
+            if (this.vehiculoEnUso(idVehiculo,fechaHoraInicio)){ throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Vehiculo "+idVehiculo+" ya esta en uso para la fecha "+pruebaDTO.fechaHoraInicio()); }
             return pruebaRepository.save(new Prueba(
                     fechaHoraInicio,
                     fechaHoraFin,
@@ -56,14 +56,15 @@ public class PruebaServicio {
         }
     }
 
-    // Consigna 1.b
-    public List<Prueba> obtenerPruebasEnCursoPorFecha(Date fechaMomento) {
-        return pruebaRepository.findPruebasEnCursoByFecha(fechaMomento);
+    private boolean vehiculoEnUso(Integer idVehiculo, Date fechaHoraInicio) {
+        Boolean rta = pruebaRepository.existsPruebaByIdVehiculoAndFecha(idVehiculo,fechaHoraInicio);
+        if(rta){}
+        return rta;
     }
 
-    public List<Prueba> obtenerPruebas() {
-        return pruebaRepository.findAll();
-    }
+    public List<Prueba> obtenerPruebasEnCursoPorFecha(Date fechaMomento) { return pruebaRepository.findPruebasEnCursoByFecha(fechaMomento); } // Consigna 1.b
+
+    public List<Prueba> obtenerPruebas() { return pruebaRepository.findAll(); }
 
     public Integer buscarVehiculoPatente(String patente) {
         try {
@@ -87,9 +88,7 @@ public class PruebaServicio {
         }
     }
 
-    public Optional<Prueba> obtenerPruebaPorIdVehiculoYFecha(Integer id, Date fechaMomento) {
-        return pruebaRepository.findPruebaByIdVehiculoYFecha(id, fechaMomento);
-    }
+    public Optional<Prueba> obtenerPruebaPorIdVehiculoYFecha(Integer id, Date fechaMomento) { return pruebaRepository.findPruebaByIdVehiculoYFecha(id, fechaMomento); }
 
     public Prueba finalizarPruebaPorEmpleado(Integer legajo, String comentario) {
         Empleado empleado = empleadoService.obtenerEmpleadoPorLegajo(legajo);
@@ -105,5 +104,15 @@ public class PruebaServicio {
             pruebaActual.setComentarios(comentario);
             return pruebaRepository.save(pruebaActual);
         }
+    }
+
+    public List<Prueba> buscarPruebasPorEmpleado(Integer legajo) {
+        Empleado empleado = empleadoService.obtenerEmpleadoPorLegajo(legajo);
+        return pruebaRepository.findPruebasByEmpleado(empleado);
+    }
+
+    public List<Prueba> buscarPruebasEnCursoPorEmpleado(Integer legajo) {
+        Empleado empleado = empleadoService.obtenerEmpleadoPorLegajo(legajo);
+        return pruebaRepository.findPruebasByEmpleadoAndFecha(empleado, new Date());
     }
 }
