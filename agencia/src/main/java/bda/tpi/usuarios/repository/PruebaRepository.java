@@ -33,4 +33,6 @@ public interface PruebaRepository extends JpaRepository<Prueba, Integer> {
     )
     public List<Prueba> findPruebasByEmpleadoAndFecha(@Param("empleado") Empleado empleado, @Param("fecha") Date fecha);
 
+    public List<Prueba> findPruebasByIdVehiculo(Integer idVehiculo);
+
 }

@@ -1,5 +1,6 @@
 package bda.tpi.usuarios.service;
 
+import bda.tpi.usuarios.dto.DetallePruebaDTO;
 import bda.tpi.usuarios.dto.PruebaDTO;
 import bda.tpi.usuarios.entity.Empleado;
 import bda.tpi.usuarios.entity.Interesado;
@@ -16,6 +17,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PruebaServicio {
@@ -42,7 +44,7 @@ public class PruebaServicio {
             Date fechaHoraInicio = format.parse(pruebaDTO.fechaHoraInicio());
             Date fechaHoraFin = format.parse(pruebaDTO.fechaHoraFin());
             if (fechaHoraInicio.after(fechaHoraFin)) { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fecha de Inicio mayor a fecha fin"); }
-            if (fechaHoraInicio.before(new Date())){ throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fecha Invalida, no se puede pasado"); }
+//            if (fechaHoraInicio.before(new Date())){ throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fecha Invalida, no se puede pasado"); }
             if (this.vehiculoEnUso(idVehiculo,fechaHoraInicio)){ throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Vehiculo "+idVehiculo+" ya esta en uso para la fecha "+pruebaDTO.fechaHoraInicio()); }
             return pruebaRepository.save(new Prueba(
                     fechaHoraInicio,
@@ -114,5 +116,37 @@ public class PruebaServicio {
     public List<Prueba> buscarPruebasEnCursoPorEmpleado(Integer legajo) {
         Empleado empleado = empleadoService.obtenerEmpleadoPorLegajo(legajo);
         return pruebaRepository.findPruebasByEmpleadoAndFecha(empleado, new Date());
+    }
+
+    public List<DetallePruebaDTO> obtenerDetallePruebasPorPatente(String patente) {
+        try {
+            ResponseEntity<Map> response = restTemplate.getForEntity(
+                    "http://127.0.0.1:8083/vehiculos/patente/" + patente, Map.class);
+
+            if (!response.getStatusCode().is2xxSuccessful()) { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Vehículo no encontrado.");}
+
+            Map<String, Object> bodyMap = response.getBody();
+            Integer vehiculoId = (Integer) bodyMap.get("id");
+
+            List<Prueba> pruebas = this.obtenerPruebasPorVehiculo(vehiculoId);
+            if (pruebas.isEmpty()) { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay pruebas realizadas para este vehículo."); }
+            return pruebas.stream()
+                    .filter(prueba -> !prueba.esPruebaActual() && prueba.esFinalizada())
+                    .map(prueba -> new DetallePruebaDTO(
+                            prueba.getId(),
+                            prueba.getFechaHoraInicio().toString(),
+                            prueba.getFechaHoraFin().toString(),
+                            prueba.getEmpleado().getLegajo(),
+                            prueba.getEmpleado().getApellido()+" "+prueba.getEmpleado().getNombre(),
+                            prueba.getInteresado().getDocumento(),
+                            prueba.getInteresado().getApellido()+" "+prueba.getInteresado().getNombre(),
+                            prueba.getComentarios()
+                    ))
+                    .collect(Collectors.toList());
+        } catch (HttpClientErrorException e) { throw new ResponseStatusException(e.getStatusCode(), e.getMessage()); }
+    }
+
+    private List<Prueba> obtenerPruebasPorVehiculo(Integer vehiculoId) {
+        return pruebaRepository.findPruebasByIdVehiculo(vehiculoId);
     }
 }

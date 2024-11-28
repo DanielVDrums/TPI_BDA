@@ -2,10 +2,11 @@ package bda.tpi.usuarios.api;
 
 import bda.tpi.usuarios.dto.DetalleDTO;
 import bda.tpi.usuarios.dto.DetalleIncidente;
+import bda.tpi.usuarios.dto.DetallePruebaDTO;
 import bda.tpi.usuarios.entity.Prueba;
+import bda.tpi.usuarios.service.PruebaServicio;
 import bda.tpi.usuarios.service.ReporteServicio;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +21,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/reportes")
 public class ReportesController {
     private final ReporteServicio reporteServicio;
+    private final PruebaServicio pruebaServicio;
 
-    public ReportesController(ReporteServicio reporteServicio) {
+    public ReportesController(ReporteServicio reporteServicio, PruebaServicio pruebaServicio) {
         this.reporteServicio = reporteServicio;
+        this.pruebaServicio = pruebaServicio;
     }
 
     @GetMapping("/incidentes")
@@ -40,6 +43,8 @@ public class ReportesController {
     @GetMapping("/kilometros")
     public void obtenerReportesDeKilometrosPrueba(){}
 
-    @GetMapping("/pruebas/vehiculo/{id}")
-    public void obtenerReportesDeVehiculosPrueba(){}
+    @GetMapping("/vehiculo/{patente}")
+    public List<DetallePruebaDTO> obtenerReportesDeVehiculosPrueba(@PathVariable String patente) {
+        return pruebaServicio.obtenerDetallePruebasPorPatente(patente);
+    }
 }
