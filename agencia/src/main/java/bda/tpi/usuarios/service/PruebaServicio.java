@@ -44,7 +44,7 @@ public class PruebaServicio {
             Date fechaHoraInicio = format.parse(pruebaDTO.fechaHoraInicio());
             Date fechaHoraFin = format.parse(pruebaDTO.fechaHoraFin());
             if (fechaHoraInicio.after(fechaHoraFin)) { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fecha de Inicio mayor a fecha fin"); }
-//            if (fechaHoraInicio.before(new Date())){ throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fecha Invalida, no se puede pasado"); }
+            if (fechaHoraInicio.before(new Date())){ throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fecha Invalida, no se puede pasado"); }
             if (this.vehiculoEnUso(idVehiculo,fechaHoraInicio)){ throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Vehiculo "+idVehiculo+" ya esta en uso para la fecha "+pruebaDTO.fechaHoraInicio()); }
             return pruebaRepository.save(new Prueba(
                     fechaHoraInicio,
