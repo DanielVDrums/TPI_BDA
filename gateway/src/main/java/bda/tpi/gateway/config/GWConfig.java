@@ -18,12 +18,6 @@ import org.springframework.security.oauth2.server.resource.authentication.Reacti
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtGrantedAuthoritiesConverterAdapter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authorization.AuthorizationContext;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
-
 
 @Configuration
 @EnableWebFluxSecurity
@@ -53,12 +47,27 @@ public class GWConfig {
                         .path("/reportes/kilometros/{id}")
                         .filters(f -> f.rewritePath("/reportes/kilometros/(?<id>.*)", "/vehiculos/kilometros/${id}"))
                         .uri(uriVehiculos))
+                .route(p -> p
+                        .path("/vehiculos/swagger-ui/**")
+                        .uri("http://localhost:8083"))
+                .route(p -> p
+                        .path("/vehiculos/v3/api-docs/**")
+                        .uri("http://localhost:8083"))
+                .route(p -> p
+                        .path("/agencia/swagger-ui/**")
+                        .uri("http://localhost:8082"))
+                .route(p -> p
+                        .path("/agencia/v3/api-docs/**")
+                        .uri("http://localhost:8082"))
                 .build();
     }
 
     @Bean
     public SecurityWebFilterChain filterChain(ServerHttpSecurity http) throws Exception {
         http.authorizeExchange(exchanges -> exchanges
+                        .pathMatchers("/agencia/swagger-ui/**", "/agencia/v3/api-docs/**", "/vehiculos/swagger-ui/**", "/vehiculos/v3/api-docs/**")
+                        .permitAll()
+
                         .pathMatchers(HttpMethod.POST,"/pruebas/**")
                         .hasRole("EMPLEADO")
                         .pathMatchers(HttpMethod.GET,"/pruebas")
