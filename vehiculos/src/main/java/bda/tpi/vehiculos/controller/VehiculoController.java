@@ -27,11 +27,6 @@ public class VehiculoController {
         this.vehiculoServicio = vehiculoServicio;
     }
 
-//    @PostMapping("/add")
-//    public Vehiculo agregarVehiculo(@RequestBody VehiculoDTO vehiculoDTO) {
-//        return vehiculoServicio.agregarNuevoVehiculo(vehiculoDTO);
-//    }
-
     @GetMapping()
     public ResponseEntity<?> obtenerTodosVehiculos() {
         List<Vehiculo> vehiculos = vehiculoServicio.obtenerTodosVehiculos();
@@ -63,10 +58,11 @@ public class VehiculoController {
     }
 
     @PostMapping("/evaluarPosicion")
-    public ResponseEntity<Void> evaluarRestricciones(@RequestBody PosicionDTO posicionDTO) {
+    public ResponseEntity<String> evaluarRestricciones(@RequestBody PosicionDTO posicionDTO) {
         vehiculoServicio.evaluarRestricciones(posicionDTO);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Se envió correctamente la posición");
     }
+
 
     @GetMapping("/kilometros/{id}")
     public double obtenerKilometrosRecorridos(

@@ -51,6 +51,6 @@ public class Interesado {
 
     public boolean licenciaVigente() {
         Date fechaActual = new Date();
-        return fechaActual.after(fechaVencimientoLicencia);
+        return fechaActual.before(fechaVencimientoLicencia);
     }
 }

@@ -11,8 +11,8 @@
     <groupId>bda.tpi</groupId>
     <artifactId>agencia</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>usuarios</name>
-    <description>usuarios</description>
+    <name>agencia</name>
+    <description>agencia</description>
     <properties>
         <java.version>17</java.version>
     </properties>
@@ -50,47 +50,16 @@
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.41.2.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.6.0</version>
+        </dependency>
 
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-community-dialects</artifactId>
         </dependency>
-
-
-
-
-        <!-- SEGURIDAD SECURITY SEGURIDAD SECURITY-->
-
-
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-spring-boot-starter</artifactId>
-            <version>20.0.0</version> <!-- Usa la versión que corresponda -->
-        </dependency>
-
-        <!-- Spring Boot Starter Security -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-
-        <!-- Dependencia de Spring AOP (para soporte de anotaciones como @PreAuthorize) -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-oauth2-jose</artifactId>
-            <version>6.1.4</version>
-        </dependency>
-
     </dependencies>
 
     <build>
