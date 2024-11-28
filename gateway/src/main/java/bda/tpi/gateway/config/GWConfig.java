@@ -32,60 +32,62 @@ public class GWConfig {
                         .path("/pruebas/**")
                         .uri(uriAgencia))
                 .route(p -> p
-                        .path("/reportes/**")
-                        .uri(uriAgencia))
-                .route(p -> p
                         .path("/vehiculos/**")
                         .uri(uriVehiculos))
                 .route(p -> p
                         .path("/notificaciones/**")
                         .uri(uriVehiculos))
                 .route(p -> p
-                        .path("/reportes/incidentes")
+                        .path("/reportes/incidentes/**")
                         .uri(uriAgencia))
                 .route(p -> p
-                        .path("/reportes/kilometros/{id}")
-                        .filters(f -> f.rewritePath("/reportes/kilometros/(?<id>.*)", "/vehiculos/kilometros/${id}"))
+                        .path("/reportes/empleado/**")
+                        .uri(uriAgencia))
+                .route(p -> p
+                        .path("/reportes/kilometros/**")
                         .uri(uriVehiculos))
                 .route(p -> p
-                        .path("/vehiculos/swagger-ui/**")
-                        .uri("http://localhost:8083"))
+                        .path("/swagger-ui/index.html")
+                        .uri("http://localhost:8080"))
                 .route(p -> p
-                        .path("/vehiculos/v3/api-docs/**")
-                        .uri("http://localhost:8083"))
+                        .path("/vehiculos/swagger-ui/**")
+                        .uri(uriVehiculos))
+                .route(p -> p
+                        .path("/v3/api-docs/**")
+                        .uri(uriVehiculos))
                 .route(p -> p
                         .path("/agencia/swagger-ui/**")
-                        .uri("http://localhost:8082"))
+                        .uri(uriAgencia))
                 .route(p -> p
-                        .path("/agencia/v3/api-docs/**")
-                        .uri("http://localhost:8082"))
+                        .path("/v3/api-docs/**")
+                        .uri(uriAgencia))
                 .build();
     }
 
     @Bean
     public SecurityWebFilterChain filterChain(ServerHttpSecurity http) throws Exception {
         http.authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/agencia/swagger-ui/**", "/agencia/v3/api-docs/**", "/vehiculos/swagger-ui/**", "/vehiculos/v3/api-docs/**")
+                        .pathMatchers("/agencia/swagger-ui/**", "/v3/api-docs/**", "/vehiculos/swagger-ui/**", "/v3/api-docs/**")
                         .permitAll()
 
                         .pathMatchers(HttpMethod.POST,"/pruebas/**")
-                        .hasRole("EMPLEADO")
-                        .pathMatchers(HttpMethod.GET,"/pruebas")
+                        .access(this.hasUsername("g070-b"))
+                        //.hasRole("EMPLEADO")
+                        .pathMatchers(HttpMethod.GET,"/pruebas/**")
                         .access(this.hasUsername("g070-b"))
 
 
                         .pathMatchers(HttpMethod.GET,"/vehiculos/**")
-                        .hasRole("VEHICULO")
+                        .access(this.hasUsername("g070-c"))
                         .pathMatchers(HttpMethod.POST,"/vehiculos/**")
-                        .hasRole("VEHICULO")
+                        .access(this.hasUsername("g070-c"))
 
                         .pathMatchers(HttpMethod.POST,"/notificaciones/**")
-                        .hasRole("EMPLEADO")
+                        .access(this.hasUsername("g070-b"))
 
                         .pathMatchers(HttpMethod.GET,"/reportes/**")
-                        .hasRole("ADMIN")
-                        .pathMatchers(HttpMethod.GET,"/vehiculos/kilometros/**")
-                        .hasRole("ADMIN")
+                        .access(this.hasUsername("g070-a"))
+                        //.hasRole("ADMIN")
 
                         .anyExchange()
                         .authenticated()

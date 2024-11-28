@@ -40,9 +40,6 @@ public class ReportesController {
         return resultado;
     }
 
-    @GetMapping("/kilometros")
-    public void obtenerReportesDeKilometrosPrueba(){}
-
     @GetMapping("/vehiculo/{patente}")
     public List<DetallePruebaDTO> obtenerReportesDeVehiculosPrueba(@PathVariable String patente) {
         return pruebaServicio.obtenerDetallePruebasPorPatente(patente);

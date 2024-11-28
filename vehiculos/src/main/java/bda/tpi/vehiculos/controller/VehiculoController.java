@@ -5,6 +5,7 @@ import bda.tpi.vehiculos.dto.PosicionDTO;
 import bda.tpi.vehiculos.dto.VehiculoDTO;
 import bda.tpi.vehiculos.entity.Vehiculo;
 import bda.tpi.vehiculos.service.VehiculoServicio;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,7 @@ public class VehiculoController {
         this.vehiculoServicio = vehiculoServicio;
     }
 
+    @Operation(summary = "Obtener todos los vehiculos", description = "Recupera una lista de todos los vehiculos")
     @GetMapping()
     public ResponseEntity<?> obtenerTodosVehiculos() {
         List<Vehiculo> vehiculos = vehiculoServicio.obtenerTodosVehiculos();
@@ -37,6 +39,7 @@ public class VehiculoController {
         }
     }
 
+    @Operation(summary = "Obtener vehiculo por id", description = "Recupera un vehiculo por su id")
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerVehiculoPorId(@PathVariable Integer id) {
         Optional<Vehiculo> vehiculo = vehiculoServicio.obtenerVehiculoPorId(id);
@@ -47,6 +50,7 @@ public class VehiculoController {
         }
     }
 
+    @Operation(summary = "Obtener vehiculo por patente", description = "Recupera una vehiculo por su patente")
     @GetMapping("/patente/{patente}")
     public ResponseEntity<?> obtenerVehiculoPorPatente(@PathVariable String patente) {
         Optional<Vehiculo> vehiculo = vehiculoServicio.obtenerVehiculoPorPatente(patente);
@@ -61,16 +65,6 @@ public class VehiculoController {
     public ResponseEntity<String> evaluarRestricciones(@RequestBody PosicionDTO posicionDTO) {
         vehiculoServicio.evaluarRestricciones(posicionDTO);
         return ResponseEntity.ok("Se envió correctamente la posición");
-    }
-
-
-    @GetMapping("/kilometros/{id}")
-    public double obtenerKilometrosRecorridos(
-            @PathVariable("id") Integer idVehiculo,
-            @RequestParam(value = "fechaInicio") String fechaInicio,
-            @RequestParam(value = "fechaFin") String fechaFin) throws ParseException {
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        return vehiculoServicio.calcularKilometrosRecorridos(idVehiculo, format.parse(fechaInicio), format.parse(fechaFin));
     }
 }
 
