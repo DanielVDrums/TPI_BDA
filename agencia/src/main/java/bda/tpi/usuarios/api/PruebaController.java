@@ -40,7 +40,6 @@ public class PruebaController {
     @GetMapping("/enCurso")
     public List<Prueba> obtenerPruebaEnCurso(@RequestParam(value = "fecha", required = false) String fecha, @RequestParam(value = "hora", required = false) String hora) throws ParseException{
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        format.setTimeZone(TimeZone.getTimeZone("UTC"));
         Date fechaHora = (fecha == null && hora == null)? new Date() : format.parse(fecha+" "+hora);
         List<Prueba> pruebas = pruebaServicio.obtenerPruebasEnCursoPorFecha(fechaHora);
         if (pruebas.isEmpty()) { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No se encontraron pruebas"); }
